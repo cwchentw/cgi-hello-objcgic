@@ -10,7 +10,7 @@ then
 fi
 
 # Set your own custom variables here.
-CGI_PROGRAM=
+CGI_PROGRAM=index.cgi
 GNUSTEP_INCLUDE=
 GNUSTEP_LIB=
 

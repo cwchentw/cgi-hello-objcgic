@@ -10,7 +10,7 @@ then
 fi
 
 # Set your own custom variables here.
-CGI_PROGRAM=
+CGI_PROGRAM=index.cgi
 
 if ! [ -z "$CGI_PROGRAM" ];
 then
