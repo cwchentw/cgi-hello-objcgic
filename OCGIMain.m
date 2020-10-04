@@ -13,7 +13,8 @@ int cgiMain(void)
         [[NSAutoreleasePool alloc] init];
     if (!pool) {
         [OCGIHeader contentType: OCGI_MIME_TYPE_TXT];
-        [OCGIHeader status: [NSNumber numberWithInt: 500]
+        [OCGIHeader
+            status: [NSNumber numberWithInt: 500]
             message: @"Internal Server Error"];
         PUTS(@"")  /* Extra newline. */
 
