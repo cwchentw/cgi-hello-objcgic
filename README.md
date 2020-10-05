@@ -16,13 +16,13 @@ It should work on Cocoa as well, though untested.
 Clone the repo:
 
 ```
-$ git clone https://github.com/cwchentw/cgi-hello-objc.git
+$ git clone https://github.com/cwchentw/cgi-hello-objcgic.git
 ```
 
-Change the working directory to the root of *my-cgi-script*:
+Change the working directory to *cgi-hello-objcgic*:
 
 ```
-$ cd cgi-hello-objc
+$ cd cgi-hello-objcgic
 ```
 
 Compile the repo:
