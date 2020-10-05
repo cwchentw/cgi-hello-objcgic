@@ -1,6 +1,6 @@
 # cgi-hello-objcgic
 
-A Hello World Program as an [objcgic](https://github.com/cwchentw/objcgic)-based CGI script.
+A Hello World program as an [objcgic](https://github.com/cwchentw/objcgic)-based CGI script.
 
 ## System Requirements
 
