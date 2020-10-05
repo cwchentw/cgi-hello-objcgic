@@ -1,12 +1,17 @@
 #include <stdlib.h>
+
+#import "NSArray+RawArray.h"
 #import "NSNumber+OCGIFormResultType.h"
 #import "OCGIForm.h"
+
 
 @implementation OCGIForm
 +(NSDictionary *) stringBy: (NSString *)name length: (NSNumber *)max
 {
     char *result = \
         (char *) malloc(sizeof(char) * ([max intValue] + 1));
+    if (!result)
+        return nil;
 
     cgiFormResultType status = \
         cgiFormString(
@@ -27,6 +32,8 @@
 {
     char *result = \
         (char *) malloc(sizeof(char) * ([max intValue] + 1));
+    if (!result)
+        return nil;
 
     cgiFormResultType status = \
         cgiFormStringNoNewlines(
@@ -46,6 +53,8 @@
 +(NSDictionary *) stringSpaceNeededBy: (NSString *)name
 {
     int *result = (int *) malloc(sizeof(int));
+    if (!result)
+        return nil;
 
     cgiFormResultType status = \
         cgiFormStringSpaceNeeded(
@@ -66,6 +75,8 @@
 +(NSDictionary *) integerBy: (NSString *)name defaultValue: (NSNumber *)defaultV
 {
     int *result = (int *) malloc(sizeof(int));
+    if (!result)
+        return nil;
 
     cgiFormResultType status = \
         cgiFormInteger(
@@ -88,6 +99,8 @@
     min: (NSNumber *)min max: (NSNumber *)max defaultValue: (NSNumber *)defaultV
 {
     int *result = (int *) malloc(sizeof(int));
+    if (!result)
+        return nil;
 
     cgiFormResultType status = \
         cgiFormIntegerBounded(
@@ -111,6 +124,8 @@
 +(NSDictionary *) doubleBy: (NSString *)name defaultValue: (NSNumber *)defaultV
 {
     double *result = (double *) malloc(sizeof(double));
+    if (!result)
+        return nil;
 
     cgiFormResultType status = \
         cgiFormDouble(
@@ -133,6 +148,8 @@
     min: (NSNumber *)min max: (NSNumber *)max defaultValue: (NSNumber *)defaultV
 {
     double *result = (double *) malloc(sizeof(double));
+    if (!result)
+        return nil;
 
     cgiFormResultType status = \
         cgiFormDoubleBounded(
@@ -151,5 +168,156 @@
     free(result);
 
     return out;
+}
+
++(NSDictionary *) selectSingleBy: (NSString *)name \
+    choices: (NSArray *)choices defaultValue: (NSNumber *)defaultV
+{
+    int *result = (int *) malloc(sizeof(int));
+    if (!result)
+        return nil;
+
+    char **choicesText = [choices cStringArray];
+    if (!choicesText) {
+        free(result);
+        return nil;
+    }
+
+    int choicesTotal = [choices count];
+
+    cgiFormResultType status = cgiFormSelectSingle(
+	    (char *)[name cString],
+        choicesText, choicesTotal, 
+	    result, [defaultV intValue]);
+
+    int _result = *result;
+
+    NSDictionary *out = [NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithOCGIFormResultType: status], @"status",
+        [NSNumber numberWithInt: _result], @"result"];
+
+    /* FIXME: Check whether any memory corruption occurs. */
+    {
+        size_t i;
+        for (i = 0; i < choicesTotal; ++i)
+            free(choicesText[i]);
+    }
+    free(choicesText);
+    free(result);
+
+    return out;
+}
+
++(NSDictionary *) selectMultipleBy: (NSString *)name choices: (NSArray *)choices
+{
+    int *invalid = NULL;
+    int *result = NULL;
+    NSNumber **resultObjs = NULL;
+    char **choicesText = NULL;
+    NSArray *_result = nil;
+
+    invalid = (int *) malloc(sizeof(int));
+    if (!invalid)
+        goto ERROR_FUNCTION;
+
+    int choicesTotal = [choices count];
+
+    result = (int *) malloc(sizeof(int) * choicesTotal);
+    if (!result)
+        goto ERROR_FUNCTION;
+
+    resultObjs = (NSNumber **) malloc(sizeof(NSNumber *) * choicesTotal);
+    if (!resultObjs)
+        goto ERROR_FUNCTION;
+
+    {
+        size_t i;
+        for (i = 0; i < choicesTotal; ++i)
+            resultObjs[i] = nil;
+    }
+
+    choicesText = [choices cStringArray];
+    if (!choicesText)
+        goto ERROR_FUNCTION;
+
+    cgiFormResultType status = cgiFormSelectMultiple(
+	    (char *)[name cString], choicesText, choicesTotal, 
+	    result, invalid);
+
+    {
+        size_t i;
+        for (i = 0; i < choicesTotal; ++i)
+            resultObjs[i] = [NSNumber numberWithInt: result[i]];
+    }
+
+    _result = [NSArray arrayWithObjects: resultObjs count: choicesTotal];
+    if (nil == _result)
+        goto ERROR_FUNCTION;
+
+    int _invalid = *invalid;
+
+    NSDictionary *out = [NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithOCGIFormResultType: status], @"status",
+        _result, @"result",
+        _invalid, @"invalid"];
+
+    if (choicesText) {
+        /* FIXME: Check whether any memory corruption. */
+        size_t i;
+        for (i = 0; i < choicesTotal; ++i)
+            free(choicesText[i]);
+
+        free(choicesText);
+    }
+
+    free(result);
+    free(invalid);
+
+    return out;
+
+ERROR_FUNCTION:
+    if (_result)
+        [_result release];
+
+    if (choicesText) {
+        /* FIXME: Check whether any memory corruption. */
+        size_t i;
+        for (i = 0; i < choicesTotal; ++i)
+            free(choicesText[i]);
+
+        free(choicesText);
+    }
+
+    if (resultObjs) {
+        size_t i;
+        for (i = 0; i < choicesTotal; ++i)
+            [resultObjs[i] release];
+
+        free(resultObjs);
+    }
+
+    if (result)
+        free(result);
+
+    if (invalid)
+        free(invalid);
+
+    return nil;
+}
+
++(NSNumber *) checoboxSingleBy: (NSString *)name
+{
+    cgiFormResultType status = cgiFormCheckboxSingle(
+	    (char *)[name cString]);
+
+    return [NSNumber numberWithOCGIFormResultType: status];
+}
+
++(NSDictionary *) checkboxMultipleBy: (NSString *)name choices: (NSArray *)choices
+{
+    /* We peeked the source of cgic.c, recognizing that the implementation of
+       `cgiFormCheckboxMultiple` is identical to `cgiFormSelectMultiple`.
+       The relation may change in the future. */
+    return [self selectMultipleBy: name choices: choices];
 }
 @end
