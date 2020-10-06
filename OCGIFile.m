@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
-#import "NSArray+RawArray.h"
 #import "NSNumber+OCGIFormResultType.h"
+#import "NSArray+RawArray.h"
 #import "OCGIFile.h"
 
 
@@ -80,5 +80,89 @@
     free(sizeP);
 
     return out;
+}
+
+-(NSDictionary *) open: (NSString *)name
+{
+    self = [[self class] alloc];
+    if (!self)
+        return nil;
+
+    cgiFilePtr *cfpp = NULL;
+
+    cgiFormResultType status = cgiFormFileOpen(
+	    (char *)[name cString], cfpp);
+
+    if (OCGI_FORM_SUCCESS == status && cfpp)
+        file = *cfpp;
+    else
+        file = NULL;
+
+    NSDictionary *out = [NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithOCGIFormResultType: status], @"status",
+        self, @"fileHandle"];
+    if (!out) {
+        cgiFormFileClose(file);
+        return nil;
+    }
+
+    return out;
+}
+
+-(OCGIFormResultType) close
+{
+    return cgiFormFileClose(file);
+}
+
+-(NSDictionary *) readWithSize: (NSNumber *)bufferSize
+{
+    int _bufferSize = [bufferSize intValue];
+
+    char *buffer = NULL;
+    int *gotP = NULL;
+    NSString *_buffer = nil;
+    NSDictionary *out = nil;
+
+    gotP = (int *) malloc(sizeof(int));
+    if (!gotP)
+        goto ERROE_FUNCTION;
+
+    buffer = (char *) malloc(sizeof(char) * (_bufferSize + 1));
+    if (!buffer)
+        goto ERROE_FUNCTION;
+
+    buffer[0] = '\0';
+
+    cgiFormResultType status = cgiFormFileRead(
+	    file, buffer, _bufferSize, gotP);
+
+    _buffer = [NSString stringWithCString: buffer];
+    if (!_buffer)
+        goto ERROE_FUNCTION;
+
+    int _gotP = *gotP;
+
+    out = [NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithOCGIFormResultType: status], @"status",
+        _buffer, @"buffer", _gotP, @"return"];
+    if (!out)
+        goto ERROE_FUNCTION;
+
+    free(buffer);
+    free(gotP);
+
+    return out;
+
+ERROE_FUNCTION:
+    if (_buffer)
+        [_buffer release];
+
+    if (buffer)
+        free(buffer);
+
+    if (gotP)
+        free(gotP);
+
+    return nil;
 }
 @end
