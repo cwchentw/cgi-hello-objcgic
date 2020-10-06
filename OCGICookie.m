@@ -11,6 +11,8 @@
     if (!result)
         return nil;
 
+    result[0] = '\0';
+
     cgiFormResultType status = \
         cgiCookieString(
             (char *)[name cString],
@@ -19,6 +21,10 @@
     NSDictionary *out = [NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithOCGIFormResultType: status], @"status",
         [NSString stringWithCString: result], @"result"];
+    if (!out) {
+        free(result);
+        return nil;
+    }
 
     free(result);
 
@@ -42,6 +48,10 @@
     NSDictionary *out = [NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithOCGIFormResultType: status], @"status",
         [NSNumber numberWithInt: _result], @"result"];
+    if (!out) {
+        free(result);
+        return nil;
+    }
 
     free(result);
 
