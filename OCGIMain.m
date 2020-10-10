@@ -17,6 +17,7 @@ int cgiMain(void)
             status: [NSNumber numberWithInt: 500]
             message: @"Internal Server Error"];
         PUTS(@"")  /* Extra newline. */
+        PUTS(@"")  /* Extra newline. */
 
         PUTS(@"Internal Server Error");
 
@@ -24,6 +25,7 @@ int cgiMain(void)
     }
 
     [OCGIHeader contentType: OCGI_MIME_TYPE_TXT];
+    PUTS(@"");  /* Extra newline. */
     PUTS(@"");  /* Extra newline. */
 
     PUTS(@"Hello World");
