@@ -5,9 +5,10 @@ A Hello World program as an [objcgic](https://github.com/cwchentw/objcgic)-based
 ## System Requirements
 
 * Clang or GCC with Objective-C support
-* GNUstep
+* Cocoa or GNUstep
+* libobjc2 (Clang only)
 
-It should work on Cocoa as well, though untested.
+Test against GNUStep on openSUSE Leap 15.2. It should work on MacOS as well, though untested.
 
 [cgic](https://github.com/boutell/cgic) itself is not needed because the repo bundles its snapshot.
 
@@ -35,6 +36,8 @@ You need a HTTP server that supports CGI or FastCGI protocol to deploy this CGI 
 
 * Apache with mod_fastcgi support
 * Nginx and fcgiwrap combo
+
+Originally, cgic append two lines of newline to the header of a HTTP response. We may use multiple header informations in a response; therefore, we write our own `+status:message:` and `+contentType:` of `OCGIHeader` class. Now, the two messages only render one line of newline to standard output.
 
 ## Copyright
 
