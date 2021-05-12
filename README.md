@@ -6,7 +6,6 @@ A Hello World program as an [objcgic](https://github.com/cwchentw/objcgic)-based
 
 * Clang or GCC with Objective-C support
 * Cocoa or GNUstep
-* libobjc2 (Clang only)
 
 Test against GNUStep on openSUSE Leap 15.2. It should work on MacOS as well, though untested.
 
@@ -38,6 +37,8 @@ You need a HTTP server that supports CGI or FastCGI protocol to deploy this CGI 
 * Nginx and fcgiwrap combo
 
 Originally, cgic append two lines of newline to the header of a HTTP response. We may use multiple header informations in a response; therefore, we write our own `+status:message:` and `+contentType:` of `OCGIHeader` class. Now, the two messages only render one line of newline to standard output.
+
+For better compatibility between libobjc and GNUstep, we use the libobjc of GCC on non-Apple platforms.
 
 ## Copyright
 
