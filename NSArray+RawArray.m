@@ -5,7 +5,7 @@
 
 
 @implementation NSArray (RawArray)
--(char **) cStringArray
+-(char **) cStringArrayUsingEncoding:(NSStringEncoding)encoding
 {
     char **arr = \
         (char **) malloc(sizeof(char *) *
@@ -17,8 +17,8 @@
         size_t i;
         for (i = 0; i < [self count]; ++i)
             arr[i] = \
-                (char *)[[self objectAtIndex: i]
-                    cString];
+                (char *)[[self objectAtIndex:i]
+                    cStringUsingEncoding:encoding];
     }
 
     return arr;

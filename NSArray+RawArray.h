@@ -3,6 +3,7 @@
 #include <Foundation/Foundation.h>
 #include "RawArray.h"
 
+
 @interface NSArray (RawArray)
--(char **) cStringArray;
+-(char **) cStringArrayUsingEncoding:(NSStringEncoding)encoding;
 @end

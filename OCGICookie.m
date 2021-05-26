@@ -1,10 +1,11 @@
 #import <Foundation/Foundation.h>
 #import "NSNumber+OCGIFormResultType.h"
+#import "OCGIEncoding.h"
 #import "OCGICookie.h"
 
 
 @implementation OCGICookie
-+(NSDictionary *) stringBy: (NSString *)name length: (NSNumber *)max
++(NSDictionary *) stringBy:(NSString *)name length:(NSNumber *)max
 {
     char *result = \
         (char *) malloc(sizeof(char) * ([max intValue] + 1));
@@ -15,12 +16,13 @@
 
     cgiFormResultType status = \
         cgiCookieString(
-            (char *)[name cString],
+            (char *)[name cStringUsingEncoding:OCGI_ENCODING],
             result, [max intValue]);
 
     NSDictionary *out = [NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithOCGIFormResultType: status], @"status",
-        [NSString stringWithCString: result], @"result"];
+        [NSNumber numberWithOCGIFormResultType:status], @"status",
+        [NSString stringWithCString:result encoding:OCGI_ENCODING], @"result",
+        nil];
     if (!out) {
         free(result);
         return nil;
@@ -31,7 +33,7 @@
     return out;
 }
 
-+(NSDictionary *) integerBy: (NSString *)name defaultValue: (NSNumber *)defaultV
++(NSDictionary *) integerBy:(NSString *)name defaultValue:(NSNumber *)defaultV
 {
     int *result = (int *) malloc(sizeof(int));
     if (!result)
@@ -39,15 +41,15 @@
 
     cgiFormResultType status = \
         cgiCookieInteger(
-            (char *)[name cString],
+            (char *)[name cStringUsingEncoding:OCGI_ENCODING],
             result,
             [defaultV intValue]);
 
     int _result = *result;
 
     NSDictionary *out = [NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithOCGIFormResultType: status], @"status",
-        [NSNumber numberWithInt: _result], @"result"];
+        [NSNumber numberWithOCGIFormResultType:status], @"status",
+        [NSNumber numberWithInt:_result], @"result", nil];
     if (!out) {
         free(result);
         return nil;
@@ -58,41 +60,41 @@
     return out;
 }
 
-+(void) setStringBy: (NSString *)name to: (NSString *)value \
-    toLive: (NSNumber *)secondsToLive \
-    path: (NSString *)path domain: (NSString *)domain \
-    options: (OCGI_COOKIE_OPTIONS) options
++(void) setStringBy:(NSString *)name to:(NSString *)value \
+    toLive:(NSNumber *)secondsToLive \
+    path:(NSString *)path domain:(NSString *)domain \
+    options:(OCGI_COOKIE_OPTIONS) options
 {
     cgiHeaderCookieSet(
-        (char *)[name cString],
-        (char *)[value cString],
+        (char *)[name cStringUsingEncoding:OCGI_ENCODING],
+        (char *)[value cStringUsingEncoding:OCGI_ENCODING],
 	    [secondsToLive intValue],
-        (char *)[path cString],
-        (char *)[domain cString],
+        (char *)[path cStringUsingEncoding:OCGI_ENCODING],
+        (char *)[domain cStringUsingEncoding:OCGI_ENCODING],
         options);
 }
 
-+(void) setStringBy: (NSString *)name to: (NSString *)value \
-    toLive: (NSNumber *)secondsToLive \
-    path: (NSString *)path domain: (NSString *)domain
++(void) setStringBy:(NSString *)name to:(NSString *)value \
+    toLive:(NSNumber *)secondsToLive \
+    path:(NSString *)path domain:(NSString *)domain
 {
     cgiHeaderCookieSetString(
-        (char *)[name cString],
-        (char *)[value cString],
+        (char *)[name cStringUsingEncoding:OCGI_ENCODING],
+        (char *)[value cStringUsingEncoding:OCGI_ENCODING],
 	    [secondsToLive intValue],
-        (char *)[path cString],
-        (char *)[domain cString]);
+        (char *)[path cStringUsingEncoding:OCGI_ENCODING],
+        (char *)[domain cStringUsingEncoding:OCGI_ENCODING]);
 }
 
-+(void) setIntegerBy: (NSString *)name to: (NSNumber *)value \
-    toLive: (NSNumber *)secondsToLive \
-    path: (NSString *)path domain: (NSString *)domain
++(void) setIntegerBy:(NSString *)name to:(NSNumber *)value \
+    toLive:(NSNumber *)secondsToLive \
+    path:(NSString *)path domain:(NSString *)domain
 {
     cgiHeaderCookieSetInteger(
-        (char *)[name cString],
+        (char *)[name cStringUsingEncoding:OCGI_ENCODING],
         [value intValue],
 	    [secondsToLive intValue],
-        (char *)[path cString],
-        (char *)[domain cString]);
+        (char *)[path cStringUsingEncoding:OCGI_ENCODING],
+        (char *)[domain cStringUsingEncoding:OCGI_ENCODING]);
 }
 @end

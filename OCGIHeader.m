@@ -1,14 +1,15 @@
 #import <Foundation/Foundation.h>
 #include <stdio.h>
+#import "OCGIEncoding.h"
 #import "OCGIHeader.h"
 
 @implementation OCGIHeader
-+(void) location: (NSString *)redirectUrl
++(void) location:(NSString *)redirectUrl
 {
-    cgiHeaderLocation((char *)[redirectUrl cString]);
+    cgiHeaderLocation((char *)[redirectUrl cStringUsingEncoding:OCGI_ENCODING]);
 }
 
-+(void) status: (NSNumber *)status message: (NSString *)statusMessage
++(void) status:(NSNumber *)status message:(NSString *)statusMessage
 {
     /* Originally, cgic append two lines of newline to
         the output of the header of a HTTP response.
@@ -16,17 +17,17 @@
         response; therefore, we write our own code. */
     fprintf(stdout, "Status: %d %s\n",
         [status intValue],
-        (char *)[statusMessage cString]);
+        (char *)[statusMessage cStringUsingEncoding:OCGI_ENCODING]);
 }
 
-+(void) contentType: (NSString *)mimeType
++(void) contentType:(NSString *)mimeType
 {
     /* Originally, cgic append two lines of newline to
         the output of the header of a HTTP response.
         We may use multiple header informations in a
         response; therefore, we write our own code. */
     fprintf(stdout, "Content-type: %s\n",
-        (char *)[mimeType cString]);
+        (char *)[mimeType cStringUsingEncoding:OCGI_ENCODING]);
 }
 
 +(void) ok

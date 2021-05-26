@@ -2,11 +2,12 @@
 
 #import "NSArray+RawArray.h"
 #import "NSNumber+OCGIFormResultType.h"
+#import "OCGIEncoding.h"
 #import "OCGIForm.h"
 
 
 @implementation OCGIForm
-+(NSDictionary *) stringBy: (NSString *)name length: (NSNumber *)max
++(NSDictionary *) stringBy:(NSString *)name length:(NSNumber *)max
 {
     int _max = [max intValue];
 
@@ -18,11 +19,15 @@
     result[0] = '\0';
 
     cgiFormResultType status = \
-        cgiFormString((char *)[name cString], result, _max);
+        cgiFormString(
+            (char *)[name cStringUsingEncoding:OCGI_ENCODING],
+            result,
+            _max);
 
     NSDictionary *out = [NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithOCGIFormResultType: status], @"status",
-        [NSString stringWithCString: result], @"result"];
+        [NSNumber numberWithOCGIFormResultType:status], @"status",
+        [NSString stringWithCString:result encoding:OCGI_ENCODING], @"result",
+        nil];
     if (!out) {
         free(result);
         return nil;
@@ -33,7 +38,7 @@
     return out;
 }
 
-+(NSDictionary *) stringNoNewlinesBy: (NSString *)name length: (NSNumber *)max
++(NSDictionary *) stringNoNewlinesBy:(NSString *)name length:(NSNumber *)max
 {
     int _max = [max intValue];
 
@@ -45,11 +50,15 @@
     result[0] = '\0';
 
     cgiFormResultType status = \
-        cgiFormStringNoNewlines((char *)[name cString], result, _max);
+        cgiFormStringNoNewlines(
+            (char *)[name cStringUsingEncoding:OCGI_ENCODING],
+            result,
+            _max);
 
     NSDictionary *out = [NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithOCGIFormResultType: status], @"status",
-        [NSString stringWithCString: result], @"result"];
+        [NSNumber numberWithOCGIFormResultType:status], @"status",
+        [NSString stringWithCString:result encoding:OCGI_ENCODING], @"result",
+        nil];
     if (!out) {
         free(result);
         return nil;
@@ -60,7 +69,7 @@
     return out;
 }
 
-+(NSDictionary *) stringSpaceNeededBy: (NSString *)name
++(NSDictionary *) stringSpaceNeededBy:(NSString *)name
 {
     int *result = (int *) malloc(sizeof(int));
     if (!result)
@@ -68,14 +77,15 @@
 
     cgiFormResultType status = \
         cgiFormStringSpaceNeeded(
-	        (char *)[name cString],
+	        (char *)[name cStringUsingEncoding:OCGI_ENCODING],
             result);
 
     int _result = *result;
 
     NSDictionary *out = [NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithOCGIFormResultType: status], @"status",
-        [NSNumber numberWithInt: _result], @"result"];
+        [NSNumber numberWithOCGIFormResultType:status], @"status",
+        [NSNumber numberWithInt:_result], @"result",
+        nil];
     if (!out) {
         free(result);
         return nil;
@@ -86,7 +96,7 @@
     return out;
 }
 
-+(NSDictionary *) integerBy: (NSString *)name defaultValue: (NSNumber *)defaultV
++(NSDictionary *) integerBy:(NSString *)name defaultValue:(NSNumber *)defaultV
 {
     int *result = (int *) malloc(sizeof(int));
     if (!result)
@@ -94,15 +104,16 @@
 
     cgiFormResultType status = \
         cgiFormInteger(
-	        (char *)[name cString],
+	        (char *)[name cStringUsingEncoding:OCGI_ENCODING],
             result,
             [defaultV intValue]);
 
     int _result = *result;
 
     NSDictionary *out = [NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithOCGIFormResultType: status], @"status",
-        [NSNumber numberWithInt: _result], @"result"];
+        [NSNumber numberWithOCGIFormResultType:status], @"status",
+        [NSNumber numberWithInt:_result], @"result",
+        nil];
     if (!out) {
         free(result);
         return nil;
@@ -113,8 +124,8 @@
     return out;
 }
 
-+(NSDictionary *) integerBoundedBy: (NSString *)name \
-    min: (NSNumber *)min max: (NSNumber *)max defaultValue: (NSNumber *)defaultV
++(NSDictionary *) integerBoundedBy:(NSString *)name \
+    min:(NSNumber *)min max:(NSNumber *)max defaultValue:(NSNumber *)defaultV
 {
     int *result = (int *) malloc(sizeof(int));
     if (!result)
@@ -122,7 +133,7 @@
 
     cgiFormResultType status = \
         cgiFormIntegerBounded(
-	        (char *)[name cString],
+	        (char *)[name cStringUsingEncoding:OCGI_ENCODING],
             result,
             [min intValue],
             [max intValue],
@@ -131,8 +142,9 @@
     int _result = *result;
 
     NSDictionary *out = [NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithOCGIFormResultType: status], @"status",
-        [NSNumber numberWithInt: _result], @"result"];
+        [NSNumber numberWithOCGIFormResultType:status], @"status",
+        [NSNumber numberWithInt:_result], @"result",
+        nil];
     if (!out) {
         free(result);
         return nil;
@@ -143,7 +155,7 @@
     return out;
 }
 
-+(NSDictionary *) doubleBy: (NSString *)name defaultValue: (NSNumber *)defaultV
++(NSDictionary *) doubleBy:(NSString *)name defaultValue:(NSNumber *)defaultV
 {
     double *result = (double *) malloc(sizeof(double));
     if (!result)
@@ -151,15 +163,16 @@
 
     cgiFormResultType status = \
         cgiFormDouble(
-	        (char *)[name cString],
+	        (char *)[name cStringUsingEncoding:OCGI_ENCODING],
             result,
             [defaultV doubleValue]);
 
     int _result = *result;
 
     NSDictionary *out = [NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithOCGIFormResultType: status], @"status",
-        [NSNumber numberWithDouble: _result], @"result"];
+        [NSNumber numberWithOCGIFormResultType:status], @"status",
+        [NSNumber numberWithDouble:_result], @"result",
+        nil];
     if (!out) {
         free(result);
         return nil;
@@ -170,8 +183,8 @@
     return out;
 }
 
-+(NSDictionary *) doubleBoundedBy: (NSString *)name \
-    min: (NSNumber *)min max: (NSNumber *)max defaultValue: (NSNumber *)defaultV
++(NSDictionary *) doubleBoundedBy:(NSString *)name \
+    min:(NSNumber *)min max:(NSNumber *)max defaultValue:(NSNumber *)defaultV
 {
     double *result = (double *) malloc(sizeof(double));
     if (!result)
@@ -179,7 +192,7 @@
 
     cgiFormResultType status = \
         cgiFormDoubleBounded(
-	        (char *)[name cString],
+	        (char *)[name cStringUsingEncoding:OCGI_ENCODING],
             result,
             [min doubleValue],
             [max doubleValue],
@@ -188,8 +201,9 @@
     double _result = *result;
 
     NSDictionary *out = [NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithOCGIFormResultType: status], @"status",
-        [NSNumber numberWithDouble: _result], @"result"];
+        [NSNumber numberWithOCGIFormResultType:status], @"status",
+        [NSNumber numberWithDouble:_result], @"result",
+        nil];
     if (!out) {
         free(result);
         return nil;
@@ -200,8 +214,8 @@
     return out;
 }
 
-+(NSDictionary *) selectSingleBy: (NSString *)name \
-    choices: (NSArray *)choices defaultValue: (NSNumber *)defaultV
++(NSDictionary *) selectSingleBy:(NSString *)name \
+    choices:(NSArray *)choices defaultValue:(NSNumber *)defaultV
 {
     int *result = NULL;
     char ** choicesText = NULL;
@@ -211,22 +225,23 @@
     if (!result)
         goto ERROR_FUNCTION;
 
-    choicesText = [choices cStringArray];
+    choicesText = [choices cStringArrayUsingEncoding:OCGI_ENCODING];
     if (!choicesText)
         goto ERROR_FUNCTION;
 
     int choicesTotal = [choices count];
 
     cgiFormResultType status = cgiFormSelectSingle(
-	    (char *)[name cString],
+	    (char *)[name cStringUsingEncoding:OCGI_ENCODING],
         choicesText, choicesTotal, 
 	    result, [defaultV intValue]);
 
     int _result = *result;
 
     out = [NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithOCGIFormResultType: status], @"status",
-        [NSNumber numberWithInt: _result], @"result"];
+        [NSNumber numberWithOCGIFormResultType:status], @"status",
+        [NSNumber numberWithInt:_result], @"result",
+        nil];
     if (!out)
         goto ERROR_FUNCTION;
 
@@ -256,7 +271,7 @@ ERROR_FUNCTION:
     return nil;
 }
 
-+(NSDictionary *) selectMultipleBy: (NSString *)name choices: (NSArray *)choices
++(NSDictionary *) selectMultipleBy:(NSString *)name choices:(NSArray *)choices
 {
     int *invalid = NULL;
     int *result = NULL;
@@ -284,13 +299,13 @@ ERROR_FUNCTION:
             resultObjs[i] = nil;
     }
 
-    choicesText = [choices cStringArray];
+    choicesText = [choices cStringArrayUsingEncoding:OCGI_ENCODING];
     if (!choicesText)
         goto ERROR_FUNCTION;
 
     cgiFormResultType status = cgiFormSelectMultiple(
-	    (char *)[name cString], choicesText, choicesTotal, 
-	    result, invalid);
+	    (char *)[name cStringUsingEncoding:OCGI_ENCODING],
+        choicesText, choicesTotal, result, invalid);
 
     {
         size_t i;
@@ -305,9 +320,10 @@ ERROR_FUNCTION:
     int _invalid = *invalid;
 
     NSDictionary *out = [NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithOCGIFormResultType: status], @"status",
+        [NSNumber numberWithOCGIFormResultType:status], @"status",
         _result, @"result",
-        [NSNumber numberWithInt: _invalid], @"invalid"];
+        [NSNumber numberWithInt:_invalid], @"invalid",
+        nil];
     if (!out)
         goto ERROR_FUNCTION;
 
@@ -361,15 +377,15 @@ ERROR_FUNCTION:
     return nil;
 }
 
-+(NSNumber *) checoboxSingleBy: (NSString *)name
++(NSNumber *) checoboxSingleBy:(NSString *)name
 {
     cgiFormResultType status = cgiFormCheckboxSingle(
-	    (char *)[name cString]);
+	    (char *)[name cStringUsingEncoding:OCGI_ENCODING]);
 
     return [NSNumber numberWithOCGIFormResultType: status];
 }
 
-+(NSDictionary *) checkboxMultipleBy: (NSString *)name choices: (NSArray *)choices
++(NSDictionary *) checkboxMultipleBy:(NSString *)name choices:(NSArray *)choices
 {
     /* We peeked the source of cgic.c, recognizing that the implementation of
        `cgiFormCheckboxMultiple` is identical to `cgiFormSelectMultiple`.
@@ -377,8 +393,8 @@ ERROR_FUNCTION:
     return [self selectMultipleBy: name choices: choices];
 }
 
-+(NSDictionary *) radioBy: (NSString *)name \
-    values: (NSArray *)values defaultValue: (NSNumber *)defaultV
++(NSDictionary *) radioBy:(NSString *)name \
+    values:(NSArray *)values defaultValue:(NSNumber *)defaultV
 {
     /* We peeked the source of cgic.c, recognizing that the implementation of
        `cgiFormRadio` is identical to `cgiFormSelectSingle`.

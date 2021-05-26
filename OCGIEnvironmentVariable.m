@@ -1,13 +1,15 @@
 #import "OCGIEnvironmentVariable.h"
 
 @implementation OCGIEnvironmentVariable
-+(OCGIEnvironmentResultType) writeBy: (NSString *)filename
++(OCGIEnvironmentResultType) writeBy:(NSString *)filename
 {
-    return cgiWriteEnvironment((char *)[filename cString]);
+    return cgiWriteEnvironment(
+        (char *)[filename cStringUsingEncoding:OCGI_ENCODING]);
 }
 
-+(OCGIEnvironmentResultType) readBy: (NSString *)filename;
++(OCGIEnvironmentResultType) readBy:(NSString *)filename;
 {
-    return cgiReadEnvironment((char *)[filename cString]);
+    return cgiReadEnvironment(
+        (char *)[filename cStringUsingEncoding:OCGI_ENCODING]);
 }
 @end
