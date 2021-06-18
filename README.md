@@ -61,4 +61,4 @@ For better compatibility between libobjc and GNUstep, we use the libobjc of GCC 
 
 ## Copyright
 
-Copyright (c) 2020, Michael Chen. Licensed under MIT.
+Copyright (c) 2020, Michelle Chen. Licensed under MIT.
